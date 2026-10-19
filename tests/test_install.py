@@ -96,6 +96,34 @@ class InstallTests(unittest.TestCase):
         self.assertEqual(marker.read_text(), "unchanged")
         self.assertTrue(self.skill.is_symlink())
 
+    def test_antigravity_fresh_install_has_one_global_rule(self):
+        result = self.run_install("--antigravity")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue((self.config / "GEMINI.md").is_file())
+        self.assertFalse((self.config / "rules/AGENTS.md").exists())
+
+    def test_antigravity_duplicate_rule_is_archived(self):
+        rule = self.config / "rules/AGENTS.md"
+        rule.parent.mkdir(parents=True)
+        original = (ROOT / "config/AGENTS.md").read_bytes()
+        rule.write_bytes(original)
+        (self.config / "GEMINI.md").write_bytes(original)
+        result = self.run_install("--antigravity")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(rule.exists())
+        archived = list((self.config / "backups").glob("*/antigravity-rules-AGENTS.md"))
+        self.assertEqual(len(archived), 1)
+        self.assertEqual(archived[0].read_bytes(), original)
+
+    def test_antigravity_custom_rule_is_preserved(self):
+        rule = self.config / "rules/AGENTS.md"
+        rule.parent.mkdir(parents=True)
+        original = b"# Machine-specific Antigravity rule\n"
+        rule.write_bytes(original)
+        result = self.run_install("--antigravity")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(rule.read_bytes(), original)
+
     def test_missing_argument_fails_before_writing(self):
         self.assertNotEqual(self.run_install("--skill-dir").returncode, 0)
         self.assertFalse(self.config.exists())
