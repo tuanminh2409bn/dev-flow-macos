@@ -1,0 +1,8 @@
+{
+  "repository": "https://github.com/addyosmani/agent-skills.git",
+  "ref": "0.6.12",
+  "commit": "a06bc63b3f8b829c14b0bbf53d99fefc39d58092",
+  "version": "0.6.12",
+  "skill_count": 24,
+  "exclude": ["using-agent-skills"]
+}
