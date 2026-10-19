@@ -11,7 +11,7 @@ This installer targets **Codex** and **Google Antigravity App/IDE** on macOS. An
 - For Codex specialist installation, a current `codex` CLI in PATH with `plugin marketplace add` and `plugin add` support.
 - Network access only when downloading the optional pinned specialists. Core installation and `doctor.py` are offline.
 
-The installer does not install system packages, change model or permission settings, or handle credentials. Install Codex using [OpenAI's setup instructions](https://learn.chatgpt.com/docs/codex-cli). Refer to [Google's skills documentation](https://antigravity.google/docs/skills) for Antigravity surfaces and locations.
+The installer does not install system packages, change model or permission settings, or handle credentials. Install Codex using [OpenAI's setup instructions](https://learn.chatgpt.com/docs/codex/cli). Refer to [Google's skills documentation](https://antigravity.google/docs/skills) for Antigravity surfaces and locations.
 
 ## Install
 
