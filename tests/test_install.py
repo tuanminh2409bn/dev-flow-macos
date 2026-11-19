@@ -40,6 +40,7 @@ class InstallTests(unittest.TestCase):
         self.assertEqual((self.config / "AGENTS.md").read_bytes(),
                          (ROOT / "config/AGENTS.md").read_bytes())
         self.assertFalse(list(self.config.glob("AGENTS.md.proposed-*")))
+        self.assertFalse((self.config / "backups").exists())
 
     def test_custom_guidance_and_old_skill_are_preserved(self):
         self.config.mkdir()
@@ -56,8 +57,9 @@ class InstallTests(unittest.TestCase):
         for p in proposals:
             self.assertEqual(p.read_bytes(), (ROOT / "config/AGENTS.md").read_bytes())
         backups = list((self.config / "backups").iterdir())
-        self.assertEqual(len(backups), 2)
-        self.assertTrue(any((p / "dev-flow/old-reference.md").exists() for p in backups))
+        self.assertEqual(len(backups), 1)
+        self.assertEqual((backups[0] / "dev-flow/old-reference.md").read_text(), "Old custom reference")
+        self.assertEqual((backups[0] / "AGENTS.md").read_bytes(), original)
         self.assert_skill_matches()
 
     def test_antigravity_target_install_and_proposal(self):
@@ -114,6 +116,18 @@ class InstallTests(unittest.TestCase):
         archived = list((self.config / "backups").glob("*/antigravity-rules-AGENTS.md"))
         self.assertEqual(len(archived), 1)
         self.assertEqual(archived[0].read_bytes(), original)
+
+    def test_antigravity_duplicate_rule_is_archived_when_guidance_is_new(self):
+        rule = self.config / "rules/AGENTS.md"
+        rule.parent.mkdir(parents=True)
+        original = (ROOT / "config/AGENTS.md").read_bytes()
+        rule.write_bytes(original)
+        result = self.run_install("--antigravity")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual((self.config / "GEMINI.md").read_bytes(), original)
+        self.assertFalse(rule.exists())
+        archived = list((self.config / "backups").glob("*/antigravity-rules-AGENTS.md"))
+        self.assertEqual([path.read_bytes() for path in archived], [original])
 
     def test_antigravity_custom_rule_is_preserved(self):
         rule = self.config / "rules/AGENTS.md"

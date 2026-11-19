@@ -206,6 +206,27 @@ class SpecialistTests(unittest.TestCase):
         self.assertEqual(len(backups), 1)
         self.assertEqual(backups[0].read_bytes(), original)
 
+    def test_codex_upgrade_restores_marketplace_when_registration_fails(self):
+        self.build()
+        marketplace = self.config / specialists.MARKETPLACE
+        specialists.build_marketplace(self.bundle, marketplace)
+        original = specialists.file_hashes(marketplace)
+        (self.source / "references/shared.md").write_text("# Updated checklist\n")
+        self.commit()
+        new_lock = dict(self.lock, version="0.6.17", commit=self.git("rev-parse", "HEAD").strip())
+
+        def fail_registration(config):
+            self.assertNotEqual(specialists.file_hashes(marketplace), original)
+            raise subprocess.CalledProcessError(1, ["codex", "plugin", "add"])
+
+        with mock.patch.object(specialists, "config_home", return_value=self.config), \
+                mock.patch.object(specialists.shutil, "which", return_value="/bin/codex"), \
+                mock.patch.object(specialists, "register_codex", side_effect=fail_registration):
+            with self.assertRaises(subprocess.CalledProcessError):
+                specialists.install("codex", self.config, self.source, new_lock)
+
+        self.assertEqual(specialists.file_hashes(marketplace), original)
+
     def test_codex_cache_must_match_current_packaged_source(self):
         self.prepare_host("codex")
         self.build()

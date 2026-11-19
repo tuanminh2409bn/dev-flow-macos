@@ -101,17 +101,29 @@ if [[ -L "$skill_dir" || ( -e "$skill_dir" && ! -d "$skill_dir" ) ]]; then
 fi
 
 guidance_path="$config_dir/$guidance_name"
+legacy_rule="$config_dir/rules/AGENTS.md"
+archive_legacy=false
+expected_guidance="$guidance_path"
+if [[ ! -e "$guidance_path" && ! -L "$guidance_path" ]]; then
+  expected_guidance="$repo_dir/config/AGENTS.md"
+fi
+if [[ "$target_host" == "antigravity" && -f "$legacy_rule" && ! -L "$legacy_rule" ]] && cmp -s "$legacy_rule" "$expected_guidance"; then
+  archive_legacy=true
+fi
+
+replace_skill=true
+if [[ -d "$skill_dir" ]] && skill_link="$(find "$skill_dir" -type l -print -quit)" && [[ -z "$skill_link" ]] &&
+    diff -qr -x .DS_Store "$repo_dir/skills/dev-flow" "$skill_dir" >/dev/null; then
+  replace_skill=false
+fi
+
 backup_dir=""
-if [[ -e "$guidance_path" || -d "$skill_dir" || -f "$config_dir/rules/AGENTS.md" ]]; then
+if [[ "$archive_legacy" == true || ( "$replace_skill" == true && -d "$skill_dir" ) ]]; then
   mkdir -p "$config_dir/backups"
   backup_dir="$(mktemp -d "$config_dir/backups/dev-flow-$(date +%Y%m%d-%H%M%S)-XXXXXX")"
   if [[ -f "$guidance_path" ]]; then
     cp "$guidance_path" "$backup_dir/$guidance_name"
   fi
-  if [[ -d "$skill_dir" ]]; then
-    cp -R "$skill_dir" "$backup_dir/dev-flow"
-  fi
-  echo "Existing configuration backed up to: $backup_dir"
 fi
 
 # Never overwrite machine-specific guidance. A differing template is a proposal.
@@ -126,28 +138,35 @@ else
   echo "Preserved existing global guidance. Review and merge: $proposal"
 fi
 
-legacy_rule="$config_dir/rules/AGENTS.md"
-if [[ "$target_host" == "antigravity" && -f "$legacy_rule" && ! -L "$legacy_rule" ]] && cmp -s "$legacy_rule" "$guidance_path"; then
+if [[ "$archive_legacy" == true ]]; then
   mv "$legacy_rule" "$backup_dir/antigravity-rules-AGENTS.md"
   echo "Archived duplicate Antigravity rule: $backup_dir/antigravity-rules-AGENTS.md"
 fi
 
-stage="$(mktemp -d "$(dirname "$skill_dir")/.dev-flow-stage-XXXXXX")"
-trap 'rm -rf "$stage"' EXIT
-cp -R "$repo_dir/skills/dev-flow/." "$stage/"
-if [[ -d "$skill_dir" ]]; then
-  mv "$skill_dir" "$backup_dir/dev-flow-original"
-fi
-if ! mv "$stage" "$skill_dir"; then
-  if [[ -d "$backup_dir/dev-flow-original" ]]; then
-    mv "$backup_dir/dev-flow-original" "$skill_dir"
+if [[ "$replace_skill" == true ]]; then
+  stage="$(mktemp -d "$(dirname "$skill_dir")/.dev-flow-stage-XXXXXX")"
+  trap 'rm -rf "$stage"' EXIT
+  cp -R "$repo_dir/skills/dev-flow/." "$stage/"
+  if [[ -d "$skill_dir" ]]; then
+    mv "$skill_dir" "$backup_dir/dev-flow"
   fi
-  exit 1
+  if ! mv "$stage" "$skill_dir"; then
+    if [[ -n "$backup_dir" && -d "$backup_dir/dev-flow" ]]; then
+      mv "$backup_dir/dev-flow" "$skill_dir"
+    fi
+    exit 1
+  fi
+  trap - EXIT
+  test -f "$skill_dir/SKILL.md"
+  echo "Installed Dev Flow skill: $skill_dir"
+else
+  echo "Dev Flow skill already matches: $skill_dir"
 fi
-trap - EXIT
 
-test -f "$skill_dir/SKILL.md"
-echo "Installed Dev Flow skill: $skill_dir"
+if [[ -n "$backup_dir" ]]; then
+  echo "Existing configuration backed up to: $backup_dir"
+fi
+
 if [[ "$with_specialists" == true ]]; then
   specialist_args=(--target "$target_host" --config-dir "$config_dir")
   if [[ -n "$specialists_source" ]]; then

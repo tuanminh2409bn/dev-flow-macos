@@ -162,6 +162,7 @@ def replace_tree(stage, destination, backups):
         if previous is not None:
             previous.rename(destination)
         raise
+    return previous
 
 
 def register_codex(config):
@@ -198,9 +199,20 @@ def install(host, config, source, lock):
             build_marketplace(bundle, replacement)
         else:
             replacement = bundle
-        replace_tree(replacement, destination, config / "backups")
-    if host == "codex":
-        register_codex(config)
+        previous = replace_tree(replacement, destination, config / "backups")
+        if host == "codex":
+            try:
+                register_codex(config)
+            except (OSError, ValueError, subprocess.CalledProcessError):
+                if previous is not None:
+                    destination.rename(replacement)
+                    try:
+                        previous.rename(destination)
+                    except OSError:
+                        replacement.rename(destination)
+                        raise
+                    print("Restored previous specialist marketplace: {}".format(destination))
+                raise
     print("Installed {} pinned specialists for {}".format(lock["skill_count"], host))
 
 
