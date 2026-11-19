@@ -1,6 +1,6 @@
 ---
 name: dev-flow
-description: Complete software implementation, debugging, refactoring, and code reviews across languages and platforms with focused context and risk-scaled verification.
+description: Implement, debug, refactor, and review software across languages and platforms. Build and verify web and mobile interfaces, including from Figma designs, mockups, and screenshots.
 ---
 
 # Dev Flow
@@ -24,6 +24,7 @@ Derive commands from repository scripts and CI, not language guesses. Load only 
 
 - Flutter/Dart (`pubspec.yaml`): [Flutter](references/flutter.md).
 - Next.js (declared `next` dependency): [Next.js](references/nextjs.md).
+- Expo/React Native (declared `expo` or `react-native` dependency): [Expo and React Native](references/expo-react-native.md).
 - Other TypeScript/JavaScript (`package.json`, `deno.json`, `tsconfig*.json`): [TypeScript and JS](references/typescript-js.md).
 - Python (`pyproject.toml`, `setup.cfg`, `setup.py`, `requirements*.txt`): [Python](references/python.md).
 - Go (`go.mod`, `go.work`): [Go](references/go.md).
@@ -36,7 +37,11 @@ Derive commands from repository scripts and CI, not language guesses. Load only 
 - SQL/ORM migrations, OpenAPI, Protobuf, or GraphQL schemas: [Data and Contracts](references/data-and-contracts.md).
 - Polyglot repos, Shell/Docker/CI, unlisted stacks, or OS/target boundaries: [Stack and Platform Discovery](references/platforms.md).
 
-These are modular starting points, not a whitelist. Follow the repository's toolchain and target platforms even when no dedicated reference exists.
+These are modular starting points, not a whitelist. When a monorepo mixes web and mobile stacks, use the affected package and target to select its reference. Follow the repository's toolchain and target platforms even when no dedicated reference exists.
+
+## Web and mobile UI
+
+When building, redesigning, or making a material visual or interaction change, read [UI implementation and verification](references/ui-ux.md) alongside the relevant stack reference. For small UI fixes, check the affected state and viewport in proportion to the change.
 
 ## Spend context where it changes decisions
 

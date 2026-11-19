@@ -9,6 +9,7 @@
 ## Context and workflow
 
 - For software implementation, debugging, refactoring, and review across stacks, prefer `dev-flow`. Its workflow owns detailed discovery and verification steps; load specialists only for concrete needs. Avoid adding `using-agent-skills` or `context-engineering` when `dev-flow` is active.
+- Use `dev-flow` for web and mobile UI work, including implementation from Figma frames, mockups, and screenshots. Follow its UI workflow for design fidelity, usability, and runtime verification.
 - Read only context needed for the next decision. Prefer targeted searches, relevant sections, and diffs; omit unrelated files and verbose logs.
 - Keep project-specific commands, architecture, and release restrictions in project instructions. Consult project memory only when relevant.
 

@@ -1,6 +1,6 @@
 # Dev Flow for macOS — Codex & Antigravity App
 
-Personal development workflow with a primary `dev-flow` skill, global working agreements, and optional specialist skills selected on demand. It supports multiple programming stacks through 14 references; it does not load every reference or an entire development lifecycle for each task.
+Personal development workflow with a primary `dev-flow` skill, global working agreements, and optional specialist skills selected on demand. It loads references for the affected stack and task.
 
 This installer targets **Codex** and **Google Antigravity App/IDE** on macOS. Antigravity CLI has a separate configuration layout and is not installed by `--antigravity`.
 
@@ -82,9 +82,11 @@ To update, run `git pull --ff-only` in this repository and repeat the install co
 The primary skill selects references from workspace manifests and actual repository scripts:
 
 - [Flutter/Dart](skills/dev-flow/references/flutter.md), [Swift/Apple](skills/dev-flow/references/swift.md), [JVM/Android](skills/dev-flow/references/jvm.md)
+- [Expo/React Native](skills/dev-flow/references/expo-react-native.md)
 - [Next.js](skills/dev-flow/references/nextjs.md), [TypeScript/JavaScript](skills/dev-flow/references/typescript-js.md), [Python](skills/dev-flow/references/python.md)
 - [Go](skills/dev-flow/references/go.md), [Rust](skills/dev-flow/references/rust.md), [.NET](skills/dev-flow/references/dotnet.md), [C/C++](skills/dev-flow/references/cpp.md), [Ruby/PHP/Elixir](skills/dev-flow/references/ruby-php-elixir.md)
 - [Data/contracts](skills/dev-flow/references/data-and-contracts.md), [Platform discovery](skills/dev-flow/references/platforms.md), [Specialist routing](skills/dev-flow/references/specialists.md)
+- [Web and mobile UI](skills/dev-flow/references/ui-ux.md) covers design from a brief, implementation from Figma or images, and visual checks on the target platform. The specialist and MCP recommendations use tools already available to the project.
 
 Keep project-specific `AGENTS.md` or `GEMINI.md` in each project's own repository. See [the historical assessment](docs/dev-flow-assessment-2026-10-12.md) for earlier design decisions; its installation snapshots are not evidence of the current machine state.
 
