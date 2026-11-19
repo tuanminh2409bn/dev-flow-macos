@@ -11,7 +11,8 @@ Prefer zero or one specialist for standard work. Add more only for distinct unre
 | Complex test design or regression boundary | `test-driven-development` |
 | Failure still unexplained after a focused reproduction | `debugging-and-error-recovery` |
 | Public API/module contract design | `api-and-interface-design` |
-| Substantial UI/accessibility work | `frontend-ui-engineering` |
+| Substantial web UI implementation | `frontend-ui-engineering` |
+| WCAG 2.2 AA audit or remediation of existing web UI | `accessibility-engineering` |
 | Browser evidence needed | `browser-testing-with-devtools` if its tooling is available; otherwise use available browser tools |
 | Auth, trust-boundary, or dependency-security risk | `security-and-hardening` |
 | Measured performance bottleneck | `performance-optimization` |
